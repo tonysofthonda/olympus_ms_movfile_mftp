@@ -126,35 +126,19 @@ public class MftpClientTest
 	
 	@Test
 	@Order(6)
-	void remoteFileShouldExist() {
-		assertTrue( mftpClient.remoteFileExists() );
-	}
-	
-	@Test
-	@Order(7)
-	void remoteFileShouldNotExists() {
-		mftpClient.setFileName("archivo.txt");
-		assertFalse( mftpClient.remoteFileExists() );
-		mftpClient.setFileName(FILE_NAME);
-	}
-	
-	
-	
-	@Test
-	@Order(8)
 	void shouldDisconnectFromFtpServer() {
 		assertTrue( mftpClient.close() );
 	}
 	
 	@Test
-	@Order(9)
+	@Order(7)
 	void shouldNotConnectToFtpServer() {
 		fakeFtpServer.stop();
 		assertFalse( mftpClient.open() );
 	}
 	
 	@Test
-	@Order(10)
+	@Order(8)
 	void shouldNotDisconnectFromFtpServer() {
 		assertFalse( mftpClient.close() );
 	}

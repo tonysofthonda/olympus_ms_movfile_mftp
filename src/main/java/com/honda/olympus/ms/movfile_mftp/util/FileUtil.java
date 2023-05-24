@@ -43,14 +43,16 @@ public final class FileUtil
 	}
 	
 	
-	public static void removeFile(String filePath) {
+	public static boolean removeFile(String filePath) {
 		Path path = Paths.get(filePath);
 		try {
 			path.toFile().delete();
 			log.info("# Dir '{}' deleted !", path.getFileName());
+			return true;
 		}
 		catch(Exception e) {
 			log.error("### Error found while deleting '{}'", path.getFileName(), e);
+			return false;
 		}
 	}
 

@@ -9,7 +9,6 @@ import java.nio.file.Paths;
 import org.apache.commons.net.PrintCommandListener;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
 
 import com.honda.olympus.ms.movfile_mftp.util.FileUtil;
@@ -113,20 +112,8 @@ public class MftpClient
 	}
 	
 	
-	public boolean remoteFileExists() {
-		try {
-			FTPFile[] list = ftp.listFiles(output);
-			
-			if (list.length == 0) {
-				log.error("### Can't find remote file '{}'", fileName);
-				return false;
-			}
-			return true;
-		}
-		catch (IOException ioe) {
-			log.error("### Error found while searching remote file '{}'", fileName, ioe);
-			return false;
-		}
+	public boolean deleteLocalFile() {
+		return FileUtil.removeFile(input);
 	}
 	
 	
