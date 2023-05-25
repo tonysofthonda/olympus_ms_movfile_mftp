@@ -22,7 +22,7 @@ import lombok.Setter;
 public class MftpService 
 {
 	
-	private static final String MSG_CONNECTION_ERROR = "FALLÓ LA CONEXIÓN AL MFTP, con los siguientes datos: %s, %s, %s";
+	private static final String MSG_CONNECTION_ERROR = "Fallo de conexión al sitio MFTP, con los siguientes datos: %s, %s";
 	private static final String MSG_SEARCH_ERROR = "El archivo %s NO existe en la ubicación %s";
 	private static final String MSG_UPLOAD_ERROR = "El archivo %s NO fue cargado correctamente en el servidor %s:%s";
 	
@@ -81,7 +81,7 @@ public class MftpService
 	
 	
 	private Event connectionErrorEvent(String fileName) {
-		return new Event(serviceName, _FAIL, format(MSG_CONNECTION_ERROR, config.getHost(), config.getPort(), config.getUser()), fileName);
+		return new Event(serviceName, _FAIL, format(MSG_CONNECTION_ERROR, config.getHost(), config.getPort()), fileName);
 	}
 	
 	private Event searchErrorEvent(String fileName) {
