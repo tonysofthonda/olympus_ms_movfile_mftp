@@ -53,7 +53,8 @@ public class MftpClient
 	        ftp.connect(config.getHost(), config.getPort());
 	        ftp.login(config.getUser(), config.getPass());
 	        
-	        ftp.enterLocalPassiveMode();   // controls local passive mode 
+	        ftp.enterLocalPassiveMode(); 
+	        ftp.setFileType(FTP.BINARY_FILE_TYPE);
 	        
 	        int reply = ftp.getReplyCode();
 	        if (!FTPReply.isPositiveCompletion(reply)) 
@@ -91,8 +92,6 @@ public class MftpClient
 		FileInputStream fis = null;
 		try {
 			fis = new FileInputStream(input);
-			ftp.setFileTransferMode(FTP.BINARY_FILE_TYPE);
-			
 		    if (!ftp.storeFile(output, fis)) 
 		    {
 		    	log.error("### Can't upload file '{}'", fileName);
