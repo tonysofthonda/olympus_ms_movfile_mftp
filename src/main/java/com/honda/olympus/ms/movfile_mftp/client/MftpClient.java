@@ -27,6 +27,8 @@ public class MftpClient
 	private String input;  
 	private String output;
 	
+	private boolean remoteDirFound; 
+	
 	
 	public MftpClient(MftpConfig config, String fileName) {
 		this.config = config;
@@ -91,6 +93,8 @@ public class MftpClient
 	public boolean uploadFile() {
 		FileInputStream fis = null;
 		try {
+			findRemoteDir();
+			
 			fis = new FileInputStream(input);
 		    if (!ftp.storeFile(output, fis)) 
 		    {
@@ -108,6 +112,19 @@ public class MftpClient
 			}
 			return false;
 		}
+	}
+	
+	
+	private void findRemoteDir() throws IOException {
+		remoteDirFound = ftp.changeWorkingDirectory(config.getOutbound());
+		if (!remoteDirFound) {
+			log.error("### Directory '{}' doesn't exist in ftp server !", config.getOutbound());
+		}
+	}
+	
+	
+	public boolean remoteDirFound() {
+		return this.remoteDirFound;
 	}
 	
 	
