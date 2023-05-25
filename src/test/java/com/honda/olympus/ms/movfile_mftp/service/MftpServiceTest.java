@@ -81,6 +81,7 @@ public class MftpServiceTest
 		when(mftpClient.open()).thenReturn(true);
 		when(mftpClient.localFileExists()).thenReturn(true);
 		when(mftpClient.uploadFile()).thenReturn(false);
+		when(mftpClient.remoteDirFound()).thenReturn(true);
 		
 		assertThatThrownBy( () -> mftpService.uploadFile(mftpClient, FILE_NAME) )
 			.isInstanceOf(ResponseStatusException.class)
@@ -88,8 +89,25 @@ public class MftpServiceTest
 	}
 	
 	
-	@Test 
+	@Test
 	@Order(4)
+	void exceptionWithOutboundDirNotFound()
+	{
+		MftpClient mftpClient = mock(MftpClient.class);
+		
+		when(mftpClient.open()).thenReturn(true);
+		when(mftpClient.localFileExists()).thenReturn(true);
+		when(mftpClient.uploadFile()).thenReturn(false);
+		when(mftpClient.remoteDirFound()).thenReturn(false);
+		
+		assertThatThrownBy( () -> mftpService.uploadFile(mftpClient, FILE_NAME) )
+			.isInstanceOf(ResponseStatusException.class)
+			.hasMessageContaining("La ruta '" + config.getOutbound() + "' NO existe en el servidor MFTP");
+	}
+	
+	
+	@Test 
+	@Order(5)
 	void noExceptionWithOkUpload() 
 	{
 		MftpClient mftpClient = mock(MftpClient.class);
