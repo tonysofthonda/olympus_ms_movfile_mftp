@@ -25,6 +25,7 @@ public class MftpService
 	private static final String MSG_CONNECTION_ERROR = "Fallo de conexión al sitio MFTP, con los siguientes datos: %s, %s";
 	private static final String MSG_SEARCH_ERROR = "El archivo %s NO existe en la ubicación %s";
 	private static final String MSG_UPLOAD_ERROR = "El archivo %s NO fue cargado correctamente en el servidor %s:%s";
+	private static final String MSG_OUTBOUND_ERROR = "La ruta '%s' NO existe en el servidor MFTP";
 	
 	
 	@Autowired private MftpConfig config;
@@ -71,7 +72,7 @@ public class MftpService
 		}
 		else {
 			client.close();
-			Event event = uploadErrorEvent(fileName);
+			Event event = client.remoteDirFound() ?  uploadErrorEvent(fileName) : outboundErrorEvent(fileName);
 			logEventService.logEvent(event);
 			notificationService.sendNotification(event);
 			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, event.msg());
@@ -94,6 +95,10 @@ public class MftpService
 	
 	private Event uploadErrorEvent(String fileName) {
 		return new Event(serviceName, _FAIL, format(MSG_UPLOAD_ERROR, fileName, config.getHost(), config.getPort()), fileName);
+	}
+	
+	private Event outboundErrorEvent(String fileName) {
+		return new Event(serviceName, _FAIL, format(MSG_OUTBOUND_ERROR, config.getOutbound()), fileName);
 	}
 	
 }
