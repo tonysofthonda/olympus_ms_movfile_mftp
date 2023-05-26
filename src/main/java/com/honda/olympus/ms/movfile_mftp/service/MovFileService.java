@@ -44,13 +44,13 @@ public class MovFileService
 			else {
 				Event event = fileErrorEvent();
 				logEventService.logEvent(event);
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, event.msg());
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST, event.getMsg());
 			}
 		}
 		else {
 			Event event = statusErrorEvent(message);
 			logEventService.logEvent(event);
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, event.msg());
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, event.getMsg());
 		}
 	}
 	

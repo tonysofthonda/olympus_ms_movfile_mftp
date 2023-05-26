@@ -14,9 +14,4 @@ public class Event
 	private Integer status;
 	private String msg;
 	private String file;
-	
-	public String source() { return source; }
-	public Integer status() { return status; }
-	public String msg() { return msg; }
-	public String file() { return file; }
 }

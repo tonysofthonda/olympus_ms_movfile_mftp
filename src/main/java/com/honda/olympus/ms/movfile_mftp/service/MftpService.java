@@ -50,7 +50,7 @@ public class MftpService
 			Event event = connectionErrorEvent(fileName);
 			logEventService.logEvent(event);
 			notificationService.sendNotification(event);
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, event.msg());
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, event.getMsg());
 		}
 		
 		// search local file
@@ -58,7 +58,7 @@ public class MftpService
 			client.close();
 			Event event = searchErrorEvent(fileName);
 			logEventService.logEvent(event);
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, event.msg());
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, event.getMsg());
 		}
 		
 		// upload file
@@ -75,7 +75,7 @@ public class MftpService
 			Event event = client.remoteDirFound() ?  uploadErrorEvent(fileName) : outboundErrorEvent(fileName);
 			logEventService.logEvent(event);
 			notificationService.sendNotification(event);
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, event.msg());
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, event.getMsg());
 		}
 		
 	}
