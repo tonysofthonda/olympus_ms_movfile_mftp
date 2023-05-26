@@ -1,5 +1,8 @@
 package com.honda.olympus.ms.movfile_mftp.client;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +25,13 @@ public class NotificationClient
 	private String url;                                    
 	
 	
-	public NotificationClient(@Value("${ms.notification.url}") String url) {
-		this.url = url;
+	public NotificationClient(
+		@Value("${ms.notification.protocol}") String protocol, 
+		@Value("${ms.notification.host}") String host, 
+		@Value("${ms.notification.port}") int port,
+		@Value("${ms.notification.path}") String path) throws MalformedURLException 
+	{
+		url = new URL(protocol, host, port, path).toString();
 		log.info("# ms.notification url: {}", url);
 	}
 	

@@ -1,5 +1,8 @@
 package com.honda.olympus.ms.movfile_mftp.client;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +25,13 @@ public class LogEventClient
 	private String url; 
 	
 	
-	public LogEventClient(@Value("${ms.logevent.url}") String url) {
-		this.url = url;
+	public LogEventClient(
+		@Value("${ms.logevent.protocol}") String protocol, 
+		@Value("${ms.logevent.host}") String host, 
+		@Value("${ms.logevent.port}") int port, 
+		@Value("${ms.logevent.path}") String path) throws MalformedURLException 
+	{
+		url = new URL(protocol, host, port, path).toString();
 		log.info("# ms.logevent url: {}", url);
 	}
 	
@@ -35,7 +43,7 @@ public class LogEventClient
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		
 		HttpEntity<Event> httpEntity = new HttpEntity<>(event, headers);
-		return restTemplate.exchange(this.url, HttpMethod.POST, httpEntity, String.class);
+		return restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
 	}
 	
 }
