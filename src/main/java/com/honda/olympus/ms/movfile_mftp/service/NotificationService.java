@@ -32,7 +32,7 @@ public class NotificationService
 			return exception.getStatusCode();
 		}
 		catch (RestClientException exception) {
-			log.error("### Unable to connect to the Notification endpoint !", exception);
+			log.error("### Unable to connect to the Notification endpoint !");
 			return null;
 		}
 	} 

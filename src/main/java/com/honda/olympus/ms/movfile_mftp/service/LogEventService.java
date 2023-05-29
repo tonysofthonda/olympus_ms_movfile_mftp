@@ -32,7 +32,7 @@ public class LogEventService
 			return exception.getStatusCode();
 		}
 		catch (RestClientException exception) {
-			log.error("### Unable to connect to the LogEvent endpoint !", exception);
+			log.error("### Unable to connect to the LogEvent endpoint !");
 			return null;
 		}
 	}
