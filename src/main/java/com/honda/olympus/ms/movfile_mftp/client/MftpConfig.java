@@ -19,17 +19,17 @@ public class MftpConfig
 	
 	private String host;
 	private int port;
-	@Value("${user}") private String user;
-	@Value("${pass}") private String pass;
+	@Value("${mftp.user}") private String user;
+	@Value("${mftp.pass}") private String pass;
 	private String source;
 	private String outbound;
 	
 	
 	public MftpConfig(
-		@Value("${host}") String host, 
-		@Value("${port}") int port, 
-		@Value("${source}") String source, 
-		@Value("${outbound}") String outbound) 
+		@Value("${mftp.host}") String host, 
+		@Value("${mftp.port}") int port, 
+		@Value("${mftp.source}") String source, 
+		@Value("${mftp.outbound}") String outbound) 
 	{
 		this.host = host;
 		this.port = port;
