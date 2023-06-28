@@ -1,5 +1,8 @@
 package com.honda.olympus.ms.movfile_mftp.service;
 
+import com.honda.olympus.ms.movfile_mftp.client.FtpClient;
+import com.honda.olympus.ms.movfile_mftp.client.SftpClient;
+import com.jcraft.jsch.SftpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -12,6 +15,9 @@ import com.honda.olympus.ms.movfile_mftp.domain.Message;
 import com.honda.olympus.ms.movfile_mftp.domain.Status;
 
 import lombok.Setter;
+
+import java.util.List;
+import java.util.Vector;
 
 
 @Setter
@@ -28,18 +34,50 @@ public class MovFileService
 	
 	@Autowired
 	private LogEventService logEventService;
-	
-	
+
+//	@Autowired
+//	private SftpClient sftpClient;
+
+
 	@Value("${service.name}")
-	private String serviceName; 
+	private String serviceName;
+
+	@Value("${mftp.outbound}")
+	private String outbound;
+
+	@Value("${sftp.host}")
+	private String sftpHost;
+
+	@Value("${sftp.port}")
+	private int sftpPort;
+
+	@Value("${sftp.user}")
+	private String sftpUser;
+
+	@Value("${sftp.password}")
+	private String sftpPassword;
 	
 	
-	public void uploadFile(Message message) 
+	public void uploadFile(Message message)
 	{
 		if (message.getStatus() == Status._SUCCESS) 
 		{
 			if (StringUtils.hasText(message.getFile())) {
-				mftpService.uploadFile(message.getFile());
+				FtpClient ftpClient = new FtpClient(sftpHost, sftpPort, sftpUser, sftpPassword, outbound);
+
+				try {
+					ftpClient.connect();
+				} catch (Exception e) {
+					throw new RuntimeException(e);
+				}
+
+
+//				try {
+//					this.sftpClient.listFiles(this.outbound);
+//				} catch (SftpException e) {
+//					throw new RuntimeException(e);
+//				}
+//				mftpService.uploadFile(message.getFile());
 			}
 			else {
 				Event event = fileErrorEvent();
