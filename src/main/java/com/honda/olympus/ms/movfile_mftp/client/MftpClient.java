@@ -22,6 +22,9 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
 import lombok.extern.slf4j.Slf4j;
+import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.sftp.SFTPClient;
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 
 @Slf4j
 public class MftpClient {
@@ -54,9 +57,11 @@ public class MftpClient {
 		this.output = FileUtil.fixSlashes(FileUtil.concat(config.getOutbound(), fileName));
 	}
 
+	
 	public boolean open() {
 	
 		try {
+			/*
 			String pass = config.getPass();
 			JSch jsch = new JSch();
 			this.session = jsch.getSession(config.getUser(),config.getHost(), config.getPort());
@@ -67,16 +72,36 @@ public class MftpClient {
 			log.debug("Creating SFTP Channel.");
 
 			this.channel = this.session.openChannel("sftp");
-			this.channel.connect();
+			this.channel.connect();*/
 
 			return true;
-		} catch (JSchException e4) {
+		} catch (Exception e4) {
 			log.error("### Error found while connecting to ftp server", e4);
 			return false;
 
 		}
 	}
+	
+	private SSHClient setupSshj() throws IOException {
+	    SSHClient client = new SSHClient();
+	    client.addHostKeyVerifier(new PromiscuousVerifier());
+	    client.connect(config.getHost(),config.getPort());
+	    client.authPassword(config.getUser(),config.getPass());
+	    return client;
+	}
 
+	
+	public void whenUploadFileUsingSshj_thenSuccess() throws IOException {
+	    SSHClient sshClient = setupSshj();
+	    SFTPClient sftpClient = sshClient.newSFTPClient();
+	 
+	    sftpClient.put(this.input,this.output);
+	 
+	    sftpClient.close();
+	    sshClient.disconnect();
+	    log.info("Monitor:: SFTP channel & session disconnected");
+	}
+	
 	public boolean localFileExists() {
 		
 		try {
@@ -96,17 +121,26 @@ public class MftpClient {
 
 	public boolean uploadFile() {
 		
+		try {
+			whenUploadFileUsingSshj_thenSuccess();	
+			return true;
+		}
+		
+		/*
 		//findRemoteDir();
 		Path path = Paths.get(this.input);
 		
 		try (InputStream inputStream = Files.newInputStream(path)){
 			
 			this.channelSftp = (ChannelSftp) this.channel;	
-			this.channelSftp.put( inputStream,this.output,null);
+			this.channelSftp.put(this.input,this.output,null,1);
+			//this.channelSftp.put( inputStream,this.output,0);
+			//this.channelSftp.rename(this.input, fileName);
+			
 			this.channelSftp.exit();
 			return true;
-		}
-		catch (IOException|SftpException ioe) {
+		}*/
+		catch (IOException ioe) {
 			ioe.printStackTrace();
 			log.error("### Can't upload file '{}' due to: {}", fileName,ioe.getLocalizedMessage());
 			return false;
@@ -139,10 +173,11 @@ public class MftpClient {
 	public boolean close() {
 	
 		try {
+			/*
 			this.channelSftp.disconnect();
 			this.channel.disconnect();
 			this.session.disconnect();
-			
+			*/
 			return true;
 		}
 		catch (Exception ioe) {
