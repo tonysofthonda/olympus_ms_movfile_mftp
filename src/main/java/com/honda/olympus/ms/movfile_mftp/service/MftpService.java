@@ -22,11 +22,12 @@ import lombok.Setter;
 public class MftpService 
 {
 	
-	private static final String MSG_CONNECTION_ERROR = "Fallo de conexión al sitio MFTP, con los siguientes datos: %s, %s";
+	private static final String MSG_CONNECTION_ERROR = "106 Error al guardar en MFT. No es posible conectarse al MFT";
 	private static final String MSG_SEARCH_ERROR = "El archivo %s NO existe en la ubicación %s";
-	private static final String MSG_UPLOAD_ERROR = "El archivo %s NO fue cargado correctamente en el servidor %s:%s";
+	private static final String MSG_UPLOAD_ERROR = "106 Error al guardar en MFT. No es posible conectarse al MFT en la interface de AFE-AHM";
 	private static final String MSG_OUTBOUND_ERROR = "La ruta '%s' NO existe en el servidor MFTP";
-	
+	private static final String MSG_UPLOAD_SUCCESS = "Guardado en MFT. El archivo %s fue guardado con éxito en MFT";
+
 	
 	@Autowired private MftpConfig config;
 	@Autowired private LogEventService logEventService;
@@ -68,9 +69,7 @@ public class MftpService
 			Event event = uploadOkEvent(fileName);
 			logEventService.logEvent(event);
 			notificationService.sendNotification(event);
-			return;
-		}
-		else {
+		} else {
 			client.close();
 			Event event = client.remoteDirFound() ?  uploadErrorEvent(fileName) : outboundErrorEvent(fileName);
 			logEventService.logEvent(event);
@@ -82,7 +81,7 @@ public class MftpService
 	
 	
 	private Event connectionErrorEvent(String fileName) {
-		return new Event(serviceName, _FAIL, format(MSG_CONNECTION_ERROR, config.getHost(), config.getPort()), fileName);
+		return new Event(serviceName, _FAIL, MSG_CONNECTION_ERROR, fileName);
 	}
 	
 	private Event searchErrorEvent(String fileName) {
@@ -90,11 +89,11 @@ public class MftpService
 	}
 	
 	private Event uploadOkEvent(String fileName) {
-		return new Event(serviceName, _SUCCESS, SUCCESS, fileName);
+		return new Event(serviceName, _SUCCESS, format(MSG_UPLOAD_SUCCESS, fileName), fileName);
 	}
 	
 	private Event uploadErrorEvent(String fileName) {
-		return new Event(serviceName, _FAIL, format(MSG_UPLOAD_ERROR, fileName, config.getHost(), config.getPort()), fileName);
+		return new Event(serviceName, _FAIL, MSG_UPLOAD_ERROR, fileName);
 	}
 	
 	private Event outboundErrorEvent(String fileName) {
